@@ -1,35 +1,48 @@
 package hackerrank.eof;
 
+import java.security.Permission;
 import java.util.Scanner;
 
 public class Solution {
+    public static void main(String[] args) {
 
-    static int B;
-    static int H;
-    static boolean flag;
+        DoNotTerminate.forbidExit();
 
-
-    static {
-        flag = true;
-        Scanner scanner = new Scanner(System.in);
-        B = scanner.nextInt();
-        H = scanner.nextInt();
         try {
-            if (B <= 0 || H <= 0) {
-                throw new Exception();
+            Scanner in = new Scanner(System.in);
+            int n = in.nextInt();
+            in.close();
+            String s = Integer.toString(n);
+//            String s= String.valueOf(n); --> this is also a good option
+
+            if (n == Integer.parseInt(s)) {
+                System.out.println("Good job");
+            } else {
+                System.out.println("Wrong answer.");
             }
-        } catch (Exception e) {
-            System.out.println(e + ":" + "Breadth and height must be positive");
-            flag = false;
+        } catch (DoNotTerminate.ExitTrappedException e) {
+            System.out.println("Unsuccessful Termination!!");
         }
     }
+}
 
-    public static void main(String[] args) {
-        if (flag) {
-            int area = B * H;
-            System.out.print(area);
-        }
+//The following class will prevent you from terminating the code using exit(0)!
+class DoNotTerminate {
 
-    }//end of main
+    public static class ExitTrappedException extends SecurityException {
 
-}//end of class
+        private static final long serialVersionUID = 1;
+    }
+
+    public static void forbidExit() {
+        final SecurityManager securityManager = new SecurityManager() {
+            @Override
+            public void checkPermission(Permission permission) {
+                if (permission.getName().contains("exitVM")) {
+                    throw new ExitTrappedException();
+                }
+            }
+        };
+        System.setSecurityManager(securityManager);
+    }
+}
